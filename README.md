@@ -2,7 +2,7 @@
 
 # 🌟 ROAM INDIA 🌟
 
-[<img src="/api/placeholder/1200/300" alt="Roam India Banner">](https://github.com/yourusername/roam-india)
+[<img src="/api/placeholder/1200/300" alt="Roam India Banner">](https://github.com/ashwanil23/roam-india)
 
 ### *Discover India's Magic, One Place at a Time*
 
