@@ -95,7 +95,10 @@ fun SplashScreen(navController: NavController) {
       </td>
     </tr>
   </table>
+  <br>
+  <strong>⚠️ Prototype Version: These screens are subject to change.</strong>
 </div>
+
 
 
 ## 🚀 Getting Started
