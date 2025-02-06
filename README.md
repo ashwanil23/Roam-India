@@ -81,8 +81,6 @@ fun SplashScreen(navController: NavController) {
 ## 📱 App Showcase
 
 <div align="center">
-[<img src="app/src/main/res/raw/roam_india_banner.svg" alt="Roam India Banner">](https://github.com/ashwanil23/roam-india)
-    
 [<img src="/api/placeholder/250/500" alt="Splash Screen">]()
 [<img src="/api/placeholder/250/500" alt="Home Screen">]()
 [<img src="/api/placeholder/250/500" alt="Details Screen">]()
