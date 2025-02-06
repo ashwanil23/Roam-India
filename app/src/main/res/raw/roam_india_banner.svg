@@ -1,0 +1,48 @@
+<svg width="1200" height="300" viewBox="0 0 1200 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Gradient -->
+    <rect width="1200" height="300" fill="url(#bgGradient)" />
+    <defs>
+        <linearGradient id="bgGradient" x1="0" y1="0" x2="1200" y2="300" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#003366" />
+            <stop offset="1" stop-color="#FF5733" />
+        </linearGradient>
+    </defs>
+
+    <!-- Roam India Text -->
+    <text x="50%" y="50%" fill="white" font-size="60" font-weight="bold" text-anchor="middle" font-family="'Courier New', Courier, monospace">
+        Roam India
+    </text>
+
+    <!-- Tagline -->
+    <text x="50%" y="65%" fill="white" font-size="24" text-anchor="middle" font-family="Arial, sans-serif">
+        Discover. Explore. Experience.
+    </text>
+
+    <!-- Airplane Animation -->
+    <g>
+        <path id="airplanePath" d="M100 150 Q600 50 1100 200" fill="transparent" stroke="white" stroke-width="2" stroke-dasharray="10,10" />
+        <image href="https://upload.wikimedia.org/wikipedia/commons/e/e9/Airplane_icon.png" width="50" height="50">
+            <animateMotion repeatCount="indefinite" dur="5s">
+                <mpath href="#airplanePath" />
+            </animateMotion>
+        </image>
+    </g>
+
+    <!-- Pulsating Location Pins -->
+    <circle cx="400" cy="140" r="8" fill="red">
+        <animate attributeName="r" values="8;12;8" dur="1.5s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="800" cy="180" r="8" fill="red">
+        <animate attributeName="r" values="8;12;8" dur="1.5s" repeatCount="indefinite" />
+    </circle>
+
+    <!-- Moving Clouds -->
+    <g opacity="0.4">
+        <circle cx="150" cy="80" r="30" fill="white">
+            <animate attributeName="cx" from="150" to="1200" dur="10s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="300" cy="50" r="20" fill="white">
+            <animate attributeName="cx" from="300" to="1200" dur="8s" repeatCount="indefinite" />
+        </circle>
+    </g>
+</svg>
