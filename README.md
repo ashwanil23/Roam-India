@@ -81,10 +81,22 @@ fun SplashScreen(navController: NavController) {
 ## 📱 App Showcase
 
 <div align="center">
-<!-- [<img src="/api/placeholder/250/500" alt="Splash Screen">]() -->
-<img src="app/src/main/res/raw/list.svg" alt="Home Screen">
-<img src="app/src/main/res/raw/detail.svg" alt="Details Screen">
+  <table>
+    <tr>
+      <td align="center">
+        <img src="app/src/main/res/raw/list.svg" width="200" alt="List Screen">
+        <br>
+        <b>List Screen</b>
+      </td>
+      <td align="center">
+        <img src="app/src/main/res/raw/detail.svg" width="200" alt="Details Screen">
+        <br>
+        <b>Details Screen</b>
+      </td>
+    </tr>
+  </table>
 </div>
+
 
 ## 🚀 Getting Started
 
