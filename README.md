@@ -82,8 +82,8 @@ fun SplashScreen(navController: NavController) {
 
 <div align="center">
 <!-- [<img src="/api/placeholder/250/500" alt="Splash Screen">]() -->
-[<img src="app/src/main/res/raw/list_screen.svg" alt="Home Screen">]()
-[<img src="app/src/main/res/raw/detail_screen.svg" alt="Details Screen">]()
+<img src="app/src/main/res/raw/list.svg" alt="Home Screen">
+<img src="app/src/main/res/raw/detail.svg" alt="Details Screen">
 </div>
 
 ## 🚀 Getting Started
