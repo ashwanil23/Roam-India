@@ -7,19 +7,26 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -44,82 +51,120 @@ import androidx.compose.ui.text.input.ImeAction
 import com.ashwani.l23.roamindia.ui.theme.parrot
 
 
-    @Composable
-fun SplashScreen(navController: NavController, context: Context) {
-    val preferencesManager = remember { PreferencesManager(context) }
-
-    LaunchedEffect(Unit) {
-        delay(2500)
-
-        // Check if onboarding has been seen
-        val nextScreen = if (preferencesManager.isOnboardingSeen()) {
-            Routes.MAIN_SCREEN
-        } else {
-            Routes.ONBOARDING_SCREEN
-        }
-
-        navController.navigate(nextScreen) {
-            popUpTo("splash") { inclusive = true }
-        }
+    // Constants and styles
+    private object AppDimensions {
+        val stateTileWidth = 333.52374.dp
+        val stateTileHeight = 82.11375.dp
+        val iconSize = 54.7425.dp
+        val cornerRadius = 18.2475.dp
+        val searchBarPadding = 28.dp
     }
 
-    // Lottie Animation
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Transparent),
-        contentAlignment = Alignment.Center
-    ) {
-        LottieAnimation(
-            composition = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.splash_animation)).value,
-            iterations = LottieConstants.IterateForever,
-            modifier = Modifier.size(300.dp)
+    private object AppStyles {
+        val titleTextStyle = TextStyle(
+            fontSize = 20.28.sp,
+            lineHeight = 25.34.sp,
+            fontWeight = FontWeight(600),
+            color = Color.White,
+            letterSpacing = 0.81.sp
+        )
+
+        val headerTextStyle = TextStyle(
+            fontSize = 15.21.sp,
+            fontWeight = FontWeight(600),
+            color = Color.White
+        )
+
+        val stateNameStyle = TextStyle(
+            fontSize = 13.18.sp,
+            fontWeight = FontWeight(600),
+            color = Color(0xFF000000)
         )
     }
-}
 
+    @Composable
+    fun SplashScreen(navController: NavController, context: Context) {
+        val preferencesManager = remember { PreferencesManager(context) }
 
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        installSplashScreen()
-        val preferencesManager = PreferencesManager(this)
-
-        val startDestination = if (preferencesManager.isOnboardingSeen()) {
-            Routes.SPLASH_SCREEN
-        } else {
-            Routes.ONBOARDING_SCREEN
+        LaunchedEffect(Unit) {
+            delay(2500)
+            navController.navigate(
+                if (preferencesManager.isOnboardingSeen()) Routes.MAIN_SCREEN
+                else Routes.ONBOARDING_SCREEN
+            ) {
+                popUpTo(Routes.SPLASH_SCREEN) { inclusive = true }
+            }
         }
 
-        setContent {
-            val navController = rememberNavController()
+        AnimatedSplashContent()
+    }
 
-            RoamIndiaTheme {
-                NavHost(
-                    navController,
-                    startDestination = startDestination
-                ) {
-                    composable(Routes.ONBOARDING_SCREEN) {
-                        OnboardingScreen(navController, preferencesManager)
-                    }
-                    composable(Routes.SPLASH_SCREEN) {
-                        SplashScreen(navController, this@MainActivity)
-                    }
-                    composable(Routes.MAIN_SCREEN) {
-                        MainScreen()
-                    }
+    @Composable
+    private fun AnimatedSplashContent() {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Transparent),
+            contentAlignment = Alignment.Center
+        ) {
+            LottieAnimation(
+                composition = rememberLottieComposition(
+                    LottieCompositionSpec.RawRes(R.raw.splash_animation)
+                ).value,
+                iterations = LottieConstants.IterateForever,
+                modifier = Modifier.size(300.dp)
+            )
+        }
+    }
+
+    class MainActivity : ComponentActivity() {
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            installSplashScreen()
+
+            val preferencesManager = PreferencesManager(this)
+            val startDestination = if (preferencesManager.isOnboardingSeen()) {
+                Routes.SPLASH_SCREEN
+            } else {
+                Routes.ONBOARDING_SCREEN
+            }
+
+            setContent {
+                RoamIndiaApp(startDestination, preferencesManager)
+            }
+        }
+    }
+
+    @Composable
+    private fun RoamIndiaApp(startDestination: String, preferencesManager: PreferencesManager) {
+        val navController = rememberNavController()
+
+        RoamIndiaTheme {
+            NavHost(navController, startDestination = startDestination) {
+                composable(Routes.ONBOARDING_SCREEN) {
+                    OnboardingScreen(navController, preferencesManager)
+                }
+                composable(Routes.SPLASH_SCREEN) {
+                    SplashScreen(navController, LocalContext.current)
+                }
+                composable(Routes.MAIN_SCREEN) {
+                    MainScreen()
                 }
             }
         }
     }
-}
 
+    @Composable
+    fun MainScreen() {
+        Scaffold(
+            topBar = { RoamIndiaTopBar() }
+        ) { innerPadding ->
+            MainContent(innerPadding)
+        }
+    }
 
-@Composable
-fun MainScreen() {
-    Scaffold(
-        topBar = { RoamIndiaTopBar() }
-    ) { innerPadding ->
+    @Composable
+    private fun MainContent(innerPadding: PaddingValues) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -128,161 +173,417 @@ fun MainScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Main screen content
+            AppSearchBar()
+            StatesListElement()
         }
     }
-}
 
-@Composable
-fun RoamIndiaTopBar(modifier: Modifier = Modifier) {
-    var input by remember { mutableStateOf("") }
-    val brush = remember {
-        Brush.linearGradient(
-            colors = listOf(
-                Color.Red,
-                Color(0xFFFF5722),
-                Color.Yellow,
-                Color.Green,
-                Color.Blue,
-                Color(0xFF4B0082),
-                Color(0xFFEE82EE)
+    @Composable
+    fun StatesListElement() {
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())
+        ) {
+            StateTile()
+        }
+    }
+
+    @Composable
+    private fun StateTile() {
+        Box(
+            modifier = Modifier
+                .width(AppDimensions.stateTileWidth)
+                .height(AppDimensions.stateTileHeight)
+                .background(
+                    color = Color(0xFFFFFDFD),
+                    shape = RoundedCornerShape(AppDimensions.cornerRadius)
+                )
+        ) {
+            StateTileContent()
+        }
+    }
+
+    @Composable
+    private fun StateTileContent() {
+        Row(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(13.18.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            StateImage()
+            StateInfo()
+            CheckButton()
+        }
+    }
+
+    @Composable
+    private fun StateImage() {
+        Image(
+            painter = painterResource(R.drawable.andhra),
+            contentDescription = "image of andhra pradesh",
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier
+                .clip(shape = RoundedCornerShape(13.18.dp))
+                .width(75.0175.dp)
+                .height(55.75625.dp)
+        )
+    }
+
+    @Composable
+    private fun StateInfo() {
+        Column(modifier = Modifier.padding(8.dp)) {
+            Text(
+                text = "Andhra Pradesh",
+                style = AppStyles.stateNameStyle,
+                modifier = Modifier
+                    .width(109.dp)
+                    .height(20.dp)
+            )
+            LocationInfo()
+        }
+    }
+
+    @Composable
+    private fun LocationInfo() {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.LocationOn,
+                contentDescription = null,
+                modifier = Modifier
+                    .width(9.70415.dp)
+                    .height(12.35072.dp),
+                tint = parrot
+            )
+            Spacer(modifier = Modifier.size(4.dp))
+            Text(
+                text = "India",
+                style = TextStyle(
+                    fontWeight = FontWeight(600),
+                    color = Color(0xFF89807A)
+                ),
+                modifier = Modifier
+                    .width(109.dp)
+                    .height(20.dp)
+            )
+        }
+    }
+
+    @Composable
+    private fun CheckButton() {
+        Button(
+            onClick = {},
+            colors = ButtonDefaults.buttonColors(parrot)
+        ) {
+            Text(text = "Check")
+        }
+    }
+
+    @Composable
+    fun AppSearchBar() {
+        var input by remember { mutableStateOf("") }
+        val rainbowBrush = remember {
+            Brush.linearGradient(
+                colors = listOf(
+                    Color.Red, Color(0xFFFF5722), Color.Yellow,
+                    Color.Green, Color.Blue, Color(0xFF4B0082), Color(0xFFEE82EE)
+                )
+            )
+        }
+
+        Column {
+            SearchBarContent(input, { input = it }, rainbowBrush)
+            SelectStateHeader()
+        }
+    }
+
+    @Composable
+    private fun SearchBarContent(
+        input: String,
+        onInputChange: (String) -> Unit,
+        textBrush: Brush
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f) // Take available space but leave room for filter
+                    .padding(
+                        top = AppDimensions.searchBarPadding,
+                        start = 12.dp,
+                        end = 12.dp
+                    )
+                    .background(
+                        color = Color.White,
+                        shape = RoundedCornerShape(21.dp)
+                    )
+            ) {
+                CustomTextField(input, onInputChange, textBrush)
+            }
+            FilterButton()
+        }
+    }
+
+    @Composable
+    private fun SearchTextField(
+        input: String,
+        onInputChange: (String) -> Unit,
+        textBrush: Brush
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(
+                    top = AppDimensions.searchBarPadding,
+                    start = 12.dp,
+                    end = 12.dp
+                )
+
+                .background(
+                    color = Color.White,
+                    shape = RoundedCornerShape(21.dp)
+                )
+        ) {
+            CustomTextField(input, onInputChange, textBrush)
+        }
+    }
+
+    @Composable
+    private fun CustomTextField(
+        input: String,
+        onInputChange: (String) -> Unit,
+        textBrush: Brush
+    ) {
+        TextField(
+            value = input,
+            onValueChange = onInputChange,
+            label = { SearchLabel() },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(),
+            textStyle = TextStyle(brush = textBrush),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Search
+            ),
+            keyboardActions = KeyboardActions(onSearch = {}),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
             )
         )
     }
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = Color(0xFF303030)),
-    ) {
+
+    @Composable
+    private fun SearchLabel() {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            SearchIcon()
+            Spacer(modifier = Modifier.width(12.dp))
+            SearchText()
+        }
+    }
+
+    @Composable
+    private fun SearchIcon() {
+        Icon(
+            imageVector = Icons.Default.Search,
+            contentDescription = "Search",
+            modifier = Modifier
+                .border(width = 1.49395.dp, color = Color.Transparent)
+                .padding(1.49395.dp)
+                .width(14.1925.dp)
+                .height(14.1925.dp),
+            tint = Color.Black
+        )
+    }
+
+    @Composable
+    private fun SearchText() {
+        Text(
+            modifier = Modifier
+                .width(79.dp)
+                .height(17.dp),
+            text = "Search places",
+            style = TextStyle(
+                fontSize = 11.15.sp,
+                fontWeight = FontWeight(500),
+                color = Color(0xFF89807A)
+            )
+        )
+    }
+
+    @Composable
+    private fun FilterButton() {
+        Box(
+            modifier = Modifier
+                .padding(top = AppDimensions.searchBarPadding, end = 12.dp)
+                .size(AppDimensions.iconSize)
+                .background(
+                    color = parrot,
+                    shape = RoundedCornerShape(16.dp)
+                )
+        ) {
+            IconButton(
+                onClick = {},
+                modifier = Modifier.align(Alignment.Center)
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.sharp_display_settings_24),
+                    contentDescription = "Filter",
+                    contentScale = ContentScale.Inside,
+                    modifier = Modifier.size(AppDimensions.iconSize)
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun SelectStateHeader() {
+        Row(
+            modifier = Modifier.padding(top = 24.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            StateSelectionTitle()
+            Spacer(modifier = Modifier.weight(1f))
+            ShowMoreButton()
+        }
+    }
+
+    @Composable
+    private fun StateSelectionTitle() {
+        Text(
+            text = "Select State",
+            style = TextStyle(
+                fontSize = 18.25.sp,
+                fontWeight = FontWeight(600),
+                color = parrot
+            ),
+            modifier = Modifier
+                .padding(start = 12.dp)
+                .width(111.dp)
+                .height(27.dp)
+        )
+    }
+
+    @Composable
+    private fun ShowMoreButton() {
+        TextButton(onClick = {}) {
+            Text(
+                text = "Show more ›",
+                style = TextStyle(
+                    fontSize = 11.15.sp,
+                    fontWeight = FontWeight(500),
+                    color = Color(0xB2FFFFFF)
+                ),
+                modifier = Modifier
+                    .width(64.dp)
+                    .height(17.dp)
+            )
+        }
+    }
+
+    @Composable
+    fun RoamIndiaTopBar(modifier: Modifier = Modifier) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = Color(0xFF303030))
+        ) {
+            TopBarHeader()
+            WelcomeMessage()
+        }
+    }
+
+    @Composable
+    private fun TopBarHeader() {
         Row(
             modifier = Modifier
-                .padding(top = 28.dp, start = 12.dp),
+                .padding(
+                    top = AppDimensions.searchBarPadding,
+                    start = 12.dp
+                ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            Image(
-                painter = painterResource(R.drawable.ic_launcher_foreground),
-                contentDescription = null,
-                modifier = Modifier
-                    .border(width = 0.50688.dp, color = Color(0xFF24C690), shape = RoundedCornerShape(size = 18.2475.dp))
-                    .width(54.7425.dp)
-                    .height(54.7425.dp),
-                contentScale = ContentScale.Crop
-            )
+            ProfileImage()
             Spacer(modifier = Modifier.width(18.dp))
-            Column {
-                Text(
-                    text = "Hello Ashwani",
-                    style = TextStyle(
-                        fontSize = 15.21.sp,
-                        fontWeight = FontWeight(600),
-                        color = Color.White,
-                    )
-                )
-                Text(
-                    text = "Good Evening!",
-                    style = TextStyle(
-                        fontSize = 15.21.sp,
-                        fontWeight = FontWeight(600),
-                        color = Color.White,
-                    )
-                )
-            }
+            GreetingText()
         }
+    }
+
+    @Composable
+    private fun ProfileImage() {
+        Image(
+            painter = painterResource(R.drawable.ic_launcher_foreground),
+            contentDescription = "Profile Picture",
+            modifier = Modifier
+                .border(
+                    width = 0.50688.dp,
+                    color = Color(0xFF24C690),
+                    shape = RoundedCornerShape(AppDimensions.cornerRadius)
+                )
+                .size(AppDimensions.iconSize),
+            contentScale = ContentScale.Crop
+        )
+    }
+
+    @Composable
+    private fun GreetingText() {
+        Column {
+            Text(
+                text = "Hello Ashwani",
+                style = AppStyles.headerTextStyle
+            )
+            Text(
+                text = "Good Evening!",
+                style = AppStyles.headerTextStyle
+            )
+        }
+    }
+
+    @Composable
+    private fun WelcomeMessage() {
         Text(
             text = "Explore the\nIncredible India!",
-            modifier = Modifier
-                .padding(top = 28.dp,start = 12.dp),
-            style = TextStyle(
-                fontSize = 20.28.sp,
-                lineHeight = 25.34.sp,
-                fontWeight = FontWeight(600),
-                color = Color.White,
-                letterSpacing = 0.81.sp,
-            )
+            modifier = Modifier.padding(
+                top = AppDimensions.searchBarPadding,
+                start = 12.dp
+            ),
+            style = AppStyles.titleTextStyle
         )
+    }
 
-        Row {
-            Box(
+    @Preview(
+        name = "Component Group",
+        showBackground = true,
+        widthDp = 400,
+        heightDp = 800
+    )
+    @Composable
+    fun ComponentGroupPreview() {
+        RoamIndiaTheme {
+            Column(
                 modifier = Modifier
-                    .weight(0.9f)
-                    .padding(top = 28.dp, start = 12.dp, end = 12.dp)
-                    .background(color = Color.White, shape = RoundedCornerShape(21.dp)) // White background with rounded corners
+                    .fillMaxSize()
+                    .background(Color(0xFF303030))
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Row{
-                    TextField(
-                        value = input,
-                        onValueChange = { input = it },
-                        label = {
-                            Row(
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Search,
-                                    contentDescription = "Search",
-                                    modifier = Modifier
-                                        .border(width = 1.49395.dp, color = Color.Transparent)
-                                        .padding(1.49395.dp)
-                                        .width(14.1925.dp)
-                                        .height(14.1925.dp),
-                                    tint = Color.Black
-                                )
-                                Spacer(modifier = Modifier.width(12.dp))
-                                Text(
-                                    modifier = Modifier
-                                        .width(79.dp)
-                                        .height(17.dp),
-                                    text = "Search places",
-                                    color = Color.Black,
-                                    style = TextStyle(
-                                        fontSize = 11.15.sp,
-                                        fontWeight = FontWeight(500),
-                                        color = Color(0xFF89807A),
-                                    )
-                                )
-                            }
-                        },
-                        singleLine = true,
-                        textStyle = TextStyle(brush = brush),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Search
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onSearch = {
-                                // Handle search action
-                            }
-                        ),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            disabledContainerColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent, // Remove bottom line (focused)
-                            unfocusedIndicatorColor = Color.Transparent, // Remove bottom line (unfocused)
-                            disabledIndicatorColor = Color.Transparent // Remove bottom line (disabled)
-                        ),
-                    )
-                }
+                RoamIndiaTopBar()
+                AppSearchBar()
+                StateTile()
+                FilterButton()
+                LocationInfo()
             }
-
-            Box(
-                modifier = Modifier
-                    .padding(top = 28.dp)
-                    .width(54.7425.dp)
-                    .height(54.7425.dp)
-                    .background(color = parrot, shape = RoundedCornerShape(16.dp))
-            )
-
-            Spacer(modifier = Modifier.weight(0.05f))
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    RoamIndiaTheme {
-        MainScreen() // Only previewing the MainScreen
-    }
-}
