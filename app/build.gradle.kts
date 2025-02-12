@@ -58,17 +58,21 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation("androidx.activity:activity-compose:1.8.2")
-    implementation("androidx.compose.ui:ui:1.5.4")
-    implementation("androidx.compose.material3:material3:1.1.2")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.5.4")
+    implementation("androidx.compose.ui:ui:1.7.7")
+    implementation("androidx.compose.material3:material3:1.3.1")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.7.7")
 
     // Navigation for Compose
-    implementation("androidx.navigation:navigation-compose:2.7.5")
+    implementation("androidx.navigation:navigation-compose:2.8.6")
 
     // SplashScreen API (Android 12+)
     implementation("androidx.core:core-splashscreen:1.0.1")
 
     // Lottie Animation for Compose
     implementation("com.airbnb.android:lottie-compose:6.1.0")
+    implementation("androidx.compose.ui:ui:1.7.7") // Use the latest version
+    implementation("androidx.compose.material:material:1.7.7")
+    implementation("androidx.compose.ui:ui-tooling:1.7.7")
+    implementation("androidx.compose.runtime:runtime:1.7.7")
 
 }
