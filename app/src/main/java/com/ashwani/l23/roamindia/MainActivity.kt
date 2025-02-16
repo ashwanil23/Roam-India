@@ -172,98 +172,90 @@ import kotlinx.coroutines.delay
     fun MainScreen(
         onCheckButtonClicked: () -> Unit
     ) {
-        Scaffold(
-            topBar = { RoamIndiaTopBar() },
-            bottomBar = {RoamIndiaBottomBar()}
-        ) { innerPadding ->
-            MainContent(innerPadding,onCheckButtonClicked = onCheckButtonClicked)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFF303030))
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                RoamIndiaTopBar()
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                ) {
+                    MainContent(
+                        PaddingValues(),
+                        onCheckButtonClicked = onCheckButtonClicked
+                    )
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 4.dp)
+            ) {
+                RoamIndiaBottomBar()
+            }
         }
     }
 
     @Composable
     fun RoamIndiaBottomBar() {
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Box(
             modifier = Modifier
-                .fillMaxWidth(),
-        ){
+                .width(340.dp)
+                .height(72.dp)
+                .clip(RoundedCornerShape(37.dp))
+                .background(Color(0xFF222222)) // Proper background
+        ) {
             BottomNavigation(
-                backgroundColor = Color(0xFF333333),
-                elevation = 19.261249542236328.dp,
+                backgroundColor = Color.Transparent, // Fix unwanted background
+                elevation = 0.dp,
                 contentColor = Color.White,
-                modifier = Modifier
-                    .width(339.60626.dp)
-                    .height(71.97624.dp)
-                    .background(color = Color(0xFF333333), shape = RoundedCornerShape(size = 39.53625.dp))
+                modifier = Modifier.fillMaxSize()
             ) {
-                BottomNavigationItem(
-                    selected = false,
-                    onClick = {  },
-                    icon = {
-                        Column {
-                            Icon(
-                                imageVector = Icons.Default.Place,
-                                contentDescription = "Hero List",
+                repeat(4) { index ->
+                    BottomNavigationItem(
+                        selected = index == 0,
+                        onClick = {}, // Add navigation action
+                        icon = {
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .size(48.dp) // Controls the touch area
+                                    .background(Color.Transparent) // Ensures no extra background
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Place,
+                                    contentDescription = "Navigation Icon",
+                                    modifier = Modifier.size(24.dp) // Adjust icon size
+                                )
+                            }
+                        },
+                        label = {
+                            Text(
+                                text = "Go",
+                                style = TextStyle(
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = if (index == 0) Color(0xFFB5E848) else Color.White
+                                )
                             )
-                            Icon(
-                                imageVector = Icons.Filled.KeyboardArrowUp,
-                                contentDescription = null
-                            )
-                        }
-                    }
-                )
-                BottomNavigationItem(
-                    selected = false,
-                    onClick = {  },
-                    icon = {
-                        Column {
-                            Icon(
-                                imageVector = Icons.Default.Place,
-                                contentDescription = "Hero List",
-                            )
-                            Icon(
-                                imageVector = Icons.Filled.KeyboardArrowUp,
-                                contentDescription = null
-                            )
-                        }
-                    }
-                )
-                BottomNavigationItem(
-                    selected = false,
-                    onClick = {  },
-                    icon = {
-                        Column {
-                            Icon(
-                                imageVector = Icons.Default.Place,
-                                contentDescription = "Hero List",
-                            )
-                            Icon(
-                                imageVector = Icons.Filled.KeyboardArrowUp,
-                                contentDescription = null
-                            )
-                        }
-                    }
-                )
-                BottomNavigationItem(
-                    selected = false,
-                    onClick = {  },
-                    icon = {
-                        Column {
-                            Icon(
-                                imageVector = Icons.Default.Place,
-                                contentDescription = "Hero List",
-                            )
-                            Icon(
-                                imageVector = Icons.Filled.KeyboardArrowUp,
-                                contentDescription = null
-                            )
-                        }
-                    }
-                )
+                        },
+                        selectedContentColor = Color(0xFFB5E848),
+                        unselectedContentColor = Color(0xAAFFFFFF)
+                    )
+                }
             }
         }
     }
+
+
+
 
     @Composable
     private fun MainContent(innerPadding: PaddingValues, onCheckButtonClicked: () -> Unit) {
@@ -291,17 +283,20 @@ import kotlinx.coroutines.delay
 
     @Composable
     private fun StateTile(onCheckButtonClicked: () -> Unit) {
-        Box(
-            modifier = Modifier
-                .width(AppDimensions.stateTileWidth)
-                .height(AppDimensions.stateTileHeight)
-                .background(
-                    color = Color(0xFFFFFDFD),
-                    shape = RoundedCornerShape(AppDimensions.cornerRadius)
-                )
-        ) {
-            StateTileContent(onCheckButtonClicked = onCheckButtonClicked)
+        repeat(10){
+            Box(
+                modifier = Modifier
+                    .width(AppDimensions.stateTileWidth)
+                    .height(AppDimensions.stateTileHeight)
+                    .background(
+                        color = Color(0xFFFFFDFD),
+                        shape = RoundedCornerShape(AppDimensions.cornerRadius)
+                    )
+            ) {
+                StateTileContent(onCheckButtonClicked = onCheckButtonClicked)
+            }
         }
+
     }
 
     @Composable
@@ -686,6 +681,7 @@ import kotlinx.coroutines.delay
                 StateTile(onCheckButtonClicked = {navController.navigate(Routes.STATE_SCREEN)})
                 FilterButton()
                 LocationInfo()
+                RoamIndiaBottomBar()
             }
         }
     }
