@@ -10,6 +10,9 @@ object Routes {
     const val SPLASH_SCREEN = "SplashScreen"
     const val MAIN_SCREEN = "main"
     const val ONBOARDING_SCREEN = "onboarding"
+    const val STATE_SCREEN = "state"
+    const val PLACE_SCREEN = "place"
+
 }
 
 

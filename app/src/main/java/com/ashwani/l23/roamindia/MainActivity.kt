@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
@@ -15,8 +14,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -26,33 +31,36 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.airbnb.lottie.compose.*
+import com.ashwani.l23.roamindia.pages.PlaceScreen
+import com.ashwani.l23.roamindia.pages.StateScreen
 import com.ashwani.l23.roamindia.ui.onboarding.OnboardingScreen
 import com.ashwani.l23.roamindia.ui.theme.RoamIndiaTheme
+import com.ashwani.l23.roamindia.ui.theme.parrot
 import com.ashwani.l23.roamindia.utils.PreferencesManager
 import com.ashwani.l23.roamindia.utils.Routes
 import kotlinx.coroutines.delay
-import androidx.compose.ui.text.input.ImeAction
-import com.ashwani.l23.roamindia.ui.theme.parrot
 
 
     // Constants and styles
-    private object AppDimensions {
+    internal object AppDimensions {
         val stateTileWidth = 333.52374.dp
         val stateTileHeight = 82.11375.dp
         val iconSize = 54.7425.dp
@@ -60,7 +68,7 @@ import com.ashwani.l23.roamindia.ui.theme.parrot
         val searchBarPadding = 28.dp
     }
 
-    private object AppStyles {
+    internal object AppStyles {
         val titleTextStyle = TextStyle(
             fontSize = 20.28.sp,
             lineHeight = 25.34.sp,
@@ -141,30 +149,124 @@ import com.ashwani.l23.roamindia.ui.theme.parrot
 
         RoamIndiaTheme {
             NavHost(navController, startDestination = startDestination) {
-                composable(Routes.ONBOARDING_SCREEN) {
+                composable(route = Routes.ONBOARDING_SCREEN) {
                     OnboardingScreen(navController, preferencesManager)
                 }
-                composable(Routes.SPLASH_SCREEN) {
+                composable(route = Routes.SPLASH_SCREEN) {
                     SplashScreen(navController, LocalContext.current)
                 }
-                composable(Routes.MAIN_SCREEN) {
-                    MainScreen()
+                composable(route = Routes.MAIN_SCREEN) {
+                    MainScreen(onCheckButtonClicked = {navController.navigate(Routes.STATE_SCREEN)} )
+                }
+                composable(route = Routes.STATE_SCREEN){
+                    StateScreen(onCheckButtonClicked = {navController.navigate(Routes.PLACE_SCREEN)})
+                }
+                composable(route = Routes.PLACE_SCREEN){
+                    PlaceScreen(onCheckButtonClicked = {})
                 }
             }
         }
     }
 
     @Composable
-    fun MainScreen() {
+    fun MainScreen(
+        onCheckButtonClicked: () -> Unit
+    ) {
         Scaffold(
-            topBar = { RoamIndiaTopBar() }
+            topBar = { RoamIndiaTopBar() },
+            bottomBar = {RoamIndiaBottomBar()}
         ) { innerPadding ->
-            MainContent(innerPadding)
+            MainContent(innerPadding,onCheckButtonClicked = onCheckButtonClicked)
         }
     }
 
     @Composable
-    private fun MainContent(innerPadding: PaddingValues) {
+    fun RoamIndiaBottomBar() {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxWidth(),
+        ){
+            BottomNavigation(
+                backgroundColor = Color(0xFF333333),
+                elevation = 19.261249542236328.dp,
+                contentColor = Color.White,
+                modifier = Modifier
+                    .width(339.60626.dp)
+                    .height(71.97624.dp)
+                    .background(color = Color(0xFF333333), shape = RoundedCornerShape(size = 39.53625.dp))
+            ) {
+                BottomNavigationItem(
+                    selected = false,
+                    onClick = {  },
+                    icon = {
+                        Column {
+                            Icon(
+                                imageVector = Icons.Default.Place,
+                                contentDescription = "Hero List",
+                            )
+                            Icon(
+                                imageVector = Icons.Filled.KeyboardArrowUp,
+                                contentDescription = null
+                            )
+                        }
+                    }
+                )
+                BottomNavigationItem(
+                    selected = false,
+                    onClick = {  },
+                    icon = {
+                        Column {
+                            Icon(
+                                imageVector = Icons.Default.Place,
+                                contentDescription = "Hero List",
+                            )
+                            Icon(
+                                imageVector = Icons.Filled.KeyboardArrowUp,
+                                contentDescription = null
+                            )
+                        }
+                    }
+                )
+                BottomNavigationItem(
+                    selected = false,
+                    onClick = {  },
+                    icon = {
+                        Column {
+                            Icon(
+                                imageVector = Icons.Default.Place,
+                                contentDescription = "Hero List",
+                            )
+                            Icon(
+                                imageVector = Icons.Filled.KeyboardArrowUp,
+                                contentDescription = null
+                            )
+                        }
+                    }
+                )
+                BottomNavigationItem(
+                    selected = false,
+                    onClick = {  },
+                    icon = {
+                        Column {
+                            Icon(
+                                imageVector = Icons.Default.Place,
+                                contentDescription = "Hero List",
+                            )
+                            Icon(
+                                imageVector = Icons.Filled.KeyboardArrowUp,
+                                contentDescription = null
+                            )
+                        }
+                    }
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun MainContent(innerPadding: PaddingValues, onCheckButtonClicked: () -> Unit) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -174,21 +276,21 @@ import com.ashwani.l23.roamindia.ui.theme.parrot
             verticalArrangement = Arrangement.Center
         ) {
             AppSearchBar()
-            StatesListElement()
+            StatesListElement(onCheckButtonClicked = onCheckButtonClicked)
         }
     }
 
     @Composable
-    fun StatesListElement() {
+    fun StatesListElement(onCheckButtonClicked: () -> Unit) {
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
-            StateTile()
+            StateTile(onCheckButtonClicked = onCheckButtonClicked)
         }
     }
 
     @Composable
-    private fun StateTile() {
+    private fun StateTile(onCheckButtonClicked: () -> Unit) {
         Box(
             modifier = Modifier
                 .width(AppDimensions.stateTileWidth)
@@ -198,12 +300,12 @@ import com.ashwani.l23.roamindia.ui.theme.parrot
                     shape = RoundedCornerShape(AppDimensions.cornerRadius)
                 )
         ) {
-            StateTileContent()
+            StateTileContent(onCheckButtonClicked = onCheckButtonClicked)
         }
     }
 
     @Composable
-    private fun StateTileContent() {
+    private fun StateTileContent(onCheckButtonClicked: () -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxHeight()
@@ -213,7 +315,7 @@ import com.ashwani.l23.roamindia.ui.theme.parrot
         ) {
             StateImage()
             StateInfo()
-            CheckButton()
+            CheckButton(onCheckButtonClicked = onCheckButtonClicked)
         }
     }
 
@@ -272,9 +374,9 @@ import com.ashwani.l23.roamindia.ui.theme.parrot
     }
 
     @Composable
-    private fun CheckButton() {
+    private fun CheckButton(onCheckButtonClicked: () -> Unit) {
         Button(
-            onClick = {},
+            onClick = {onCheckButtonClicked()},
             colors = ButtonDefaults.buttonColors(parrot)
         ) {
             Text(text = "Check")
@@ -366,7 +468,7 @@ import com.ashwani.l23.roamindia.ui.theme.parrot
             textStyle = TextStyle(brush = textBrush),
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Search
+                imeAction = ImeAction.Default
             ),
             keyboardActions = KeyboardActions(onSearch = {}),
             colors = TextFieldDefaults.colors(
@@ -570,7 +672,7 @@ import com.ashwani.l23.roamindia.ui.theme.parrot
         heightDp = 800
     )
     @Composable
-    fun ComponentGroupPreview() {
+    fun ComponentGroupPreview(navController: NavHostController = rememberNavController()) {
         RoamIndiaTheme {
             Column(
                 modifier = Modifier
@@ -581,7 +683,7 @@ import com.ashwani.l23.roamindia.ui.theme.parrot
             ) {
                 RoamIndiaTopBar()
                 AppSearchBar()
-                StateTile()
+                StateTile(onCheckButtonClicked = {navController.navigate(Routes.STATE_SCREEN)})
                 FilterButton()
                 LocationInfo()
             }
