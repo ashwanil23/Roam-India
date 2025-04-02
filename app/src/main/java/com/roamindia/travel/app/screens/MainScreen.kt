@@ -1,5 +1,6 @@
 package com.roamindia.travel.app.screens
 
+import ErrorView
 import LocationHeader
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,13 +17,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -42,11 +48,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -68,21 +77,26 @@ fun MainScreen(
     placeSearchViewModel: PlaceSearchViewModel,
     weatherViewModel: WeatherViewModel
 ) {
-    var place by remember { mutableStateOf("") }
     Column(
         modifier = modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(
                 horizontal = dimensionResource(R.dimen.medium),
                 vertical = dimensionResource(R.dimen.medium)
             )
     ) {
         Row {
-            Box(
-                modifier = Modifier.weight(1f)
+            Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(150.dp),
+                shape = RoundedCornerShape(dimensionResource(R.dimen.xsmall)),
+                colors = CardDefaults.elevatedCardColors(Color.Transparent)
             ) {
                 ProfileSection()
             }
+
 
             Spacer(modifier.padding(dimensionResource(R.dimen.small)))
 
@@ -92,6 +106,7 @@ fun MainScreen(
                     .height(150.dp),
                 elevation = CardDefaults.cardElevation(dimensionResource(R.dimen.small)),
                 shape = RoundedCornerShape(dimensionResource(R.dimen.xsmall)),
+                colors = CardDefaults.elevatedCardColors(Color.LightGray),
                 onClick = onWeatherButtonClicked
             ) {
                 WeatherSection(weatherViewModel = weatherViewModel)
@@ -99,19 +114,28 @@ fun MainScreen(
         }
         Text(
             text = "State",
-            modifier = Modifier.padding(vertical = dimensionResource(R.dimen.medium))
+            modifier = Modifier
+                .padding(vertical = dimensionResource(R.dimen.medium)),
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            fontStyle = FontStyle.Italic
         )
         Card(
             modifier = Modifier.fillMaxWidth(),
-            elevation = CardDefaults.cardElevation(4.dp),
-            shape = RoundedCornerShape(8.dp),
+            elevation = CardDefaults.cardElevation(dimensionResource(R.dimen.xsmall)),
+            shape = RoundedCornerShape(dimensionResource(R.dimen.small)),
+            colors = CardDefaults.elevatedCardColors(Color.LightGray)
         ) {
             Column {
                 CustomSearchBar(
                     placeSearchViewModel= placeSearchViewModel,
                     weatherViewModel = weatherViewModel
                 )
-                StateListView(modifier = Modifier, onCheckedButtonClicked = onCheckedButtonClicked) // Fix
+                StateListView(
+                    modifier = Modifier
+                        .height(450.dp),
+                    onCheckedButtonClicked = onCheckedButtonClicked
+                )
             }
         }
         Spacer(Modifier.padding(dimensionResource(R.dimen.medium)))
@@ -121,10 +145,25 @@ fun MainScreen(
 }
 
 @Composable
+fun ChatBot() {
+
+}
+
+@Composable
 fun EndOfAppView() {
     Column {
-        Text("Made with ❤️")
-        Text(text = "In India")
+        Text(
+            text = "Made with ❤️",
+            fontSize = 48.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Start
+        )
+        Text(
+            text = "In India",
+            fontSize = 48.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Start
+        )
     }
 }
 
@@ -134,6 +173,7 @@ fun CustomSearchBar(
     weatherViewModel: WeatherViewModel
 ) {
     var place by remember { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
@@ -144,7 +184,7 @@ fun CustomSearchBar(
         onValueChange = { place = it },
         label = {
             Text(
-                text = "Enter City"
+                text = "Enter Place"
             )
         },
         singleLine = true,
@@ -153,6 +193,7 @@ fun CustomSearchBar(
                 onClick = {
                     weatherViewModel.getWeatherData(place);
                     placeSearchViewModel.getPlaceData(place)
+                    keyboardController?.hide()
                 }
             ) {
                 Icon(
@@ -160,13 +201,24 @@ fun CustomSearchBar(
                     contentDescription = "Search",
                 )
             }
-        }
+        },
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        keyboardActions = KeyboardActions(onSearch = {
+            weatherViewModel.getWeatherData(place);
+            placeSearchViewModel.getPlaceData(place)
+            keyboardController?.hide()
+        })
     )
 }
 
 @Composable
-fun StateListView(modifier: Modifier, onCheckedButtonClicked: () -> Unit) {
-    LazyColumn{
+fun StateListView(
+    modifier: Modifier,
+    onCheckedButtonClicked: () -> Unit
+) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize()
+    ){
         items(10) {
             Box(
                 modifier = Modifier
@@ -244,6 +296,9 @@ fun StateListView(modifier: Modifier, onCheckedButtonClicked: () -> Unit) {
                 }
             }
         }
+        item {
+            Spacer(Modifier.padding(bottom = dimensionResource(R.dimen.medium)))
+        }
     }
 }
 
@@ -256,7 +311,7 @@ fun WeatherSection(weatherViewModel: WeatherViewModel) {
     ) {
         when(val result = weatherResult.value) {
             is NetworkResponse.Error -> {
-                androidx.compose.material.Text(text = result.message)
+                ErrorView(result.message)
             }
             NetworkResponse.Loading -> {
                 LoadingView()
@@ -364,8 +419,18 @@ fun ProfileSection() {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.Start
         ) {
-            Text(text = "Hi!",Modifier.fillMaxWidth())
-            Text(text = "Traveller",Modifier.fillMaxWidth())
+            Text(
+                text = "Hi!",
+                Modifier
+                    .fillMaxWidth(),
+                fontSize = 32.sp,
+            )
+            Text(
+                text = "Traveller",
+                Modifier
+                    .fillMaxWidth(),
+                fontWeight = FontWeight.Bold,
+            )
         }
     }
 }

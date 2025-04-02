@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TabRowDefaults.Divider
 import androidx.compose.material.Text
@@ -31,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -62,7 +64,10 @@ fun WeatherScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(dimensionResource(R.dimen.medium)),
+            .padding(
+                horizontal = dimensionResource(R.dimen.small),
+                vertical = dimensionResource(R.dimen.mediumPlus),
+            ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
@@ -74,7 +79,7 @@ fun WeatherScreen(
         item {
             when(val result = weatherResult.value) {
                 is NetworkResponse.Error -> {
-                    Text(text = result.message)
+                    ErrorView(result.message)
                 }
                 NetworkResponse.Loading -> {
                     LoadingView()
@@ -86,6 +91,30 @@ fun WeatherScreen(
                     EmptyStateView()
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun ErrorView(message: String) {
+    Column {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.error_icon),
+                contentDescription = "Error",
+                modifier = Modifier
+                    .padding(top = dimensionResource(R.dimen.medium))
+
+            )
+            Spacer(modifier = Modifier.padding(dimensionResource(R.dimen.small)))
+            Text(
+                text = message, // Using emoji instead of icon
+                fontSize = 16.sp
+            )
         }
     }
 }

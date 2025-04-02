@@ -80,4 +80,5 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:$retrofitVersion")
     implementation("androidx.compose.runtime:runtime-livedata:1.7.8")
     implementation("io.coil-kt.coil3:coil-compose:3.1.0")
+    implementation("androidx.compose.material3:material3-window-size-class")
 }

@@ -14,6 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -80,6 +83,7 @@ private fun AnimatedSplashContent() {
     }
 }
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
@@ -94,13 +98,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RoamIndiaTheme {
+                val windowSize = calculateWindowSizeClass(this)
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     RoamIndiaApp(
                         modifier = Modifier.padding(innerPadding),
                         startDestination = startDestination,
                         preferencesManager = preferencesManager,
                         weatherViewModel = weatherViewModel,
-                        placeSearchViewModel = placeSearchViewModel
+                        placeSearchViewModel = placeSearchViewModel,
+                        windowSize = windowSize.widthSizeClass
+
                     )
                 }
             }
@@ -115,7 +122,8 @@ fun RoamIndiaApp(
     preferencesManager: PreferencesManager,
     onboardingViewModel: OnboardingViewModel = viewModel(),
     weatherViewModel: WeatherViewModel,
-    placeSearchViewModel: PlaceSearchViewModel
+    placeSearchViewModel: PlaceSearchViewModel,
+    windowSize: WindowWidthSizeClass,
 ) {
     val navController = rememberNavController()
     NavHost(navController = navController,startDestination = startDestination) {

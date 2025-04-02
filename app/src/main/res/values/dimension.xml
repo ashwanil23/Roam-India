@@ -15,6 +15,9 @@
     <dimen name="xxxxlarge">120.dp</dimen>
     <dimen name="xxxxxlarge">160.dp</dimen>
     <dimen name="large_sp">28.sp</dimen>
+    <dimen name="medium_sp">16.sp</dimen>
+    <dimen name="xmedium_sp">12.sp</dimen>
+    <dimen name="small_sp">8.sp</dimen>
     <dimen name="state_tile_width">334.dp</dimen>
     <dimen name="state_tile_hight">83.dp</dimen>
 </resources>
