@@ -1,0 +1,64 @@
+<svg viewBox="0 0 1200 300" xmlns="http://www.w3.org/2000/svg">
+    <!-- Gradient Definitions -->
+    <defs>
+        <!-- Background gradient -->
+        <linearGradient id="bgGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" style="stop-color:#1a237e"/>
+            <stop offset="100%" style="stop-color:#0d47a1"/>
+        </linearGradient>
+        
+        <!-- Text gradient -->
+        <linearGradient id="textGradient" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" style="stop-color:#FF9933"/>
+            <stop offset="50%" style="stop-color:#FFFFFF"/>
+            <stop offset="100%" style="stop-color:#138808"/>
+        </linearGradient>
+        
+        <!-- Pattern for background -->
+        <pattern id="pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+            <circle cx="20" cy="20" r="1" fill="#ffffff" opacity="0.2"/>
+        </pattern>
+    </defs>
+    
+    <!-- Background -->
+    <rect width="1200" height="300" fill="url(#bgGradient)"/>
+    <rect width="1200" height="300" fill="url(#pattern)"/>
+    
+    <!-- Decorative Elements -->
+    <!-- Taj Mahal Silhouette -->
+    <path d="M500,200 L550,200 L600,150 L650,200 L700,200 
+             L700,150 C650,100 550,100 500,150 Z" 
+          fill="#ffffff" opacity="0.2"/>
+    
+    <!-- Main Title -->
+    <text x="600" y="130" 
+          font-family="Arial" 
+          font-size="90" 
+          font-weight="bold" 
+          text-anchor="middle" 
+          fill="url(#textGradient)" 
+          style="filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.3));">
+        ROAM INDIA
+    </text>
+    
+    <!-- Tagline -->
+    <text x="600" y="180" 
+          font-family="Arial" 
+          font-size="25" 
+          text-anchor="middle" 
+          fill="#ffffff" 
+          opacity="0.9">
+        Discover India's Magic, One Place at a Time
+    </text>
+    
+    <!-- Decorative Lines -->
+    <line x1="300" y1="200" x2="500" y2="200" stroke="#FF9933" stroke-width="3"/>
+    <line x1="700" y1="200" x2="900" y2="200" stroke="#138808" stroke-width="3"/>
+    
+    <!-- Indian Motifs -->
+    <circle cx="250" cy="200" r="15" fill="#FF9933"/>
+    <circle cx="950" cy="200" r="15" fill="#138808"/>
+    
+    <!-- Bottom Border -->
+    <rect x="0" y="290" width="1200" height="10" fill="url(#textGradient)"/>
+</svg>

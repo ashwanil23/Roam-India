@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="small">8.dp</dimen>
+    <dimen name="xsmall">4.dp</dimen>
+    <dimen name="xxsmall">2.dp</dimen>
+    <dimen name="xxxsmall">1.dp</dimen>
+    <dimen name="xmedium">12.dp</dimen>
+    <dimen name="medium">16.dp</dimen>
+    <dimen name="mediumPlus">24.dp</dimen>
+    <dimen name="large">28.dp</dimen>
+    <dimen name="Large">44.dp</dimen>
+    <dimen name="xlarge">56.dp</dimen>
+    <dimen name="xxlarge">64.dp</dimen>
+    <dimen name="xxxlarge">80.dp</dimen>
+    <dimen name="xxxxlarge">120.dp</dimen>
+    <dimen name="xxxxxlarge">160.dp</dimen>
+    <dimen name="large_sp">28.sp</dimen>
+    <dimen name="state_tile_width">334.dp</dimen>
+    <dimen name="state_tile_hight">83.dp</dimen>
+</resources>
