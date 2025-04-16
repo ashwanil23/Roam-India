@@ -1,155 +1,163 @@
-# RoamIndia
+# 🌏 RoamIndia
 
 <div align="center">
-  
-  ![RoamIndia Logo](https://via.placeholder.com/150)
-  
-  [![Kotlin](https://img.shields.io/badge/kotlin-1.9.0-blue.svg)](https://kotlinlang.org/)
-  [![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-Latest-green.svg)](https://developer.android.com/jetpack/compose)
-  [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-  
+
+![RoamIndia Logo](https://via.placeholder.com/150)
+
+[![Kotlin](https://img.shields.io/badge/kotlin-1.9.0-blue.svg)](https://kotlinlang.org/)  
+[![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-Latest-green.svg)](https://developer.android.com/jetpack/compose)  
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 </div>
+
+---
 
 ## 📱 Overview
 
-**RoamIndia** is a comprehensive travel companion application designed to enhance your exploration of India. Built with modern Android development practices, the app provides real-time weather updates, detailed information about Indian states and tourist destinations, all presented through an intuitive and engaging user interface.
+**RoamIndia** is a modern, intuitive travel companion app built using Jetpack Compose. It helps users explore Indian states and destinations with rich visuals, live weather updates, and smooth onboarding. Designed with modular architecture and scalability in mind, it's perfect for both travelers and Android developers learning best practices.
+
+---
 
 ## ✨ Key Features
 
 ### 🌦️ Weather Forecasting
-- **Real-time weather data** for any Indian city
-- Comprehensive metrics including temperature, humidity, wind speed, visibility
-- Visual weather condition indicators and day/night status
-- Powered by dynamic API integration
+- Real-time weather data for any Indian city
+- Shows temperature, humidity, wind speed, visibility, and air quality
+- Animated weather conditions and day/night indicators
+- Powered by a dynamic API via Retrofit
 
-### 🏞️ State & Place Exploration
-- Curated list of Indian states with vibrant imagery and concise descriptions
-- Detailed exploration of places of interest within each state
-- Rich visual content with location details
-- Interactive 'Visit' functionality for deeper discovery
+### 🏞️ Explore Indian States & Places
+- Curated list of Indian states with images and short summaries
+- Dive deeper into places of interest with detailed cards
+- Includes high-quality visuals and "Visit" interactivity
 
 ### 🚀 Onboarding Experience
-- Smooth, visually engaging introduction for first-time users
-- State preservation using ViewModel architecture
-- Intuitive navigation through app features
+- Smooth Lottie-powered onboarding for first-time users
+- State handled with ViewModel for persistence across configuration changes
 
-### 🔍 Search Capabilities
-- Custom-designed search interface for city and place discovery
-- Real-time results with state management
-- Optimized for quick access to information
+### 📍 Location Tracking
+- Detect and display user’s current coordinates
+- Easy integration with Android location services
+
+### 🔍 Custom Search Interface
+- Lightweight, real-time city and place search
+- Fast filtering and Compose-based clean UI
+
+---
 
 ## 🛠️ Technical Architecture
 
-### Tech Stack
-- **Language:** Kotlin
-- **UI Framework:** Jetpack Compose with Material 3 design
-- **Architecture Pattern:** MVVM (Model-View-ViewModel)
-- **Networking:** Retrofit with Coroutines
-- **State Management:** LiveData integrated with ViewModel
-- **Build System:** Gradle
+### 🧱 Tech Stack
+| Layer            | Tech Used                                 |
+|------------------|--------------------------------------------|
+| Language         | Kotlin                                     |
+| UI               | Jetpack Compose + Material 3               |
+| Architecture     | MVVM with clean ViewModel separation       |
+| Networking       | Retrofit + Coroutines                      |
+| State Management | LiveData, ViewModel                        |
+| Animation        | Lottie                                     |
+| Build Tool       | Gradle (with Version Catalog)              |
 
-### Project Structure
+---
+
+### 🧩 Project Structure
+
 ```
 app/
- ├── src/main/java/com/roamindia/travel/app/
- │   ├── MainActivity.kt          # App entry point
- │   ├── di/                      # Dependency injection
- │   ├── model/                   # Data models
- │   │   ├── weather/
- │   │   ├── places/
- │   │   └── states/
- │   ├── network/                 # API services
- │   │   ├── WeatherApiService.kt
- │   │   └── ApiResponse.kt
- │   ├── repository/              # Data repositories
- │   ├── ui/
- │   │   ├── screens/             # Compose screens
- │   │   │   ├── onboarding/
- │   │   │   ├── weather/
- │   │   │   ├── states/
- │   │   │   └── places/
- │   │   ├── components/          # Reusable UI components
- │   │   └── theme/               # App styling
- │   ├── utils/                   # Utility functions
- │   └── viewmodel/               # ViewModels
- │       ├── WeatherViewModel.kt
- │       ├── StateViewModel.kt
- │       ├── PlaceViewModel.kt
- │       └── OnboardingViewModel.kt
- └── res/                         # Resources
+ ├── MainActivity.kt              # Entry point, sets up navigation
+ ├── data/
+ │   ├── model/                   # Data classes for Weather, Places, States
+ │   ├── repository/              # Data retrieval logic
+ │   └── network/                 # Retrofit setup & API interfaces
+ ├── ui/
+ │   ├── screens/
+ │   │   ├── onboarding/          # Onboarding screens and ViewModel
+ │   │   ├── weather/             # Weather UI & logic
+ │   │   ├── states/              # State explorer screens
+ │   │   └── places/              # Place details
+ │   ├── components/              # Reusable UI widgets
+ │   └── theme/                   # Typography, colors, and theme settings
+ ├── utils/                       # Helper methods (e.g., location, formatting)
+ └── viewmodel/                   # ViewModels for each screen
 ```
 
-## 📲 Installation
+---
 
-### Prerequisites
-- Android Studio Arctic Fox (2021.3.1) or higher
-- Minimum SDK: Android 6.0 (API level 23)
-- Target SDK: Android 13 (API level 33)
+## 🚀 Getting Started
 
-### Steps
+### 📋 Prerequisites
+- Android Studio Hedgehog (or higher)
+- Android SDK 33+
+- Minimum SDK: 23 (Android 6.0)
+
+### 🧪 Installation Steps
+
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/RoamIndia.git
-   ```
+```bash
+git clone https://github.com/yourusername/RoamIndia.git
+```
 
-2. Open the project in Android Studio.
+2. Open in **Android Studio**
 
-3. Configure the Weather API key:
-   - Create a file named `apikey.properties` in the root project directory
-   - Add your API key:
-     ```properties
-     WEATHER_API_KEY="your-api-key-here"
-     ```
+3. Create an `apikey.properties` file in your root directory and add:
+```properties
+WEATHER_API_KEY="your-api-key-here"
+```
 
-4. Sync Gradle and build the project.
+4. Sync Gradle and run the app on an emulator or device.
 
-5. Run on an emulator or physical device.
+---
 
-## ⚙️ API Configuration
+## 🔑 API Configuration
 
-RoamIndia uses a weather API for fetching real-time weather data. To configure:
+RoamIndia integrates with a weather data provider.
 
-1. Obtain an API key from [Weather API Provider]
-2. Add it to the `apikey.properties` file as described in the installation section
-3. The app automatically handles authentication and data fetching
+1. Sign up at [Weather API Provider]  
+2. Retrieve your API key  
+3. Add it to `apikey.properties` as:
+```properties
+WEATHER_API_KEY="your-api-key"
+```
+
+---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Feel free to improve RoamIndia:
+We 💖 contributions!
 
-1. Fork the repository
-2. Create a feature branch:
+### 🛤 How to Contribute
+1. Fork this repo
+2. Create your feature branch:
    ```bash
-   git checkout -b feature/amazing-feature
+   git checkout -b feature/my-feature
    ```
 3. Commit your changes:
    ```bash
-   git commit -m 'Add some amazing feature'
+   git commit -m 'Add my feature'
    ```
-4. Push to the branch:
-   ```bash
-   git push origin feature/amazing-feature
-   ```
-5. Open a Pull Request
+4. Push and open a Pull Request
 
-### Contribution Guidelines
-- Follow Kotlin coding conventions
-- Add appropriate documentation
-- Ensure UI consistency with existing design
-- Include tests for new functionality
+### ✅ Guidelines
+- Follow Kotlin & Compose best practices
+- Ensure UI consistency
+- Write reusable and modular code
+- Include comments and documentation
+- Test your changes before pushing
 
-## 🐛 Troubleshooting
+---
 
-- **Weather data not loading?** Check your API key and internet connection
-- **UI issues?** Ensure you're using the latest version of Jetpack Compose
-- **Build failures?** Update Android Studio and sync Gradle
+## 🐞 Troubleshooting
 
-## 📄 License
+| Issue                        | Solution                                                           |
+|-----------------------------|--------------------------------------------------------------------|
+| Weather data not loading    | Check your internet or `WEATHER_API_KEY` setup                    |
+| App crashing on startup     | Ensure dependencies are properly synced and API key is valid      |
+| UI looks broken             | Use latest Android Studio and stable emulator/device              |
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+---
 
-## 🙏 Acknowledgements
+## 🙌 Acknowledgements
 
-- Weather data provided by [Weather API Provider]
-- Images sourced from [Image Source]
-- Icon assets from [Icon Library]
+- Weather data from [Weather API Provider]  
+- Indian images and assets from [Unsplash / Pexels / Gov.in Open Data]  
+- Icons by [Material Icons / Flaticon]
