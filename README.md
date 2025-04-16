@@ -157,6 +157,6 @@ We 💖 contributions!
 
 ## 🙌 Acknowledgements
 
-- Weather data from [Weather API Provider]  
+- Weather data from [[Weather API Provider](https://www.weatherapi.com/)]  
 - Indian images and assets from [Unsplash / Pexels / Gov.in Open Data]  
 - Icons by [Material Icons / Flaticon]
