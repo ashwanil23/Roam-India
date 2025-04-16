@@ -2,6 +2,12 @@ package com.roamindia.travel.app.screens
 
 import ErrorView
 import LocationHeader
+import android.Manifest
+import android.content.Context
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -10,6 +16,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,6 +30,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -37,6 +46,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -48,6 +58,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
@@ -60,27 +71,44 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.rememberNavController
+import com.roamindia.travel.app.MainActivity
 import com.roamindia.travel.app.R
 import com.roamindia.travel.app.ui.theme.RoamIndiaTheme
+import com.roamindia.travel.app.utils.MyLocationUtils
 import com.roamindia.travel.app.utils.Routes
+import com.roamindia.travel.app.viewModel.CurrentLocationViewModel
 import com.roamindia.travel.app.viewModel.PlaceSearchViewModel
 import com.roamindia.travel.app.viewModel.WeatherViewModel
 import com.roamindia.travel.app.weatherApi.NetworkResponse
 import com.roamindia.travel.app.weatherApi.model.WeatherModel
+import java.time.LocalTime
 
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
     onWeatherButtonClicked: ()->Unit,
     onCheckedButtonClicked: () -> Unit,
+    onAddDropDownClicked: () -> Unit,
     placeSearchViewModel: PlaceSearchViewModel,
-    weatherViewModel: WeatherViewModel
+    weatherViewModel: WeatherViewModel,
+    currentLocationViewModel: CurrentLocationViewModel,
+    currentLocationUtils: MyLocationUtils,
+    context: Context
 ) {
+    val currentHour = LocalTime.now().hour
+    val backgroundColor = when (currentHour) {
+        in 5..11 -> Color(0xFFFFF59D)
+        in 12..16 -> Color(0xFF90CAF9)
+        in 17..19 -> Color(0xFFFFAB91)
+        else -> Color(0xFFB39DDB)
+    }
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
+            .background(backgroundColor)
             .padding(
                 horizontal = dimensionResource(R.dimen.medium),
                 vertical = dimensionResource(R.dimen.medium)
@@ -94,7 +122,13 @@ fun MainScreen(
                 shape = RoundedCornerShape(dimensionResource(R.dimen.xsmall)),
                 colors = CardDefaults.elevatedCardColors(Color.Transparent)
             ) {
-                ProfileSection()
+                ProfileSection(
+                    onAddDropDownClicked = onAddDropDownClicked,
+                    currentLocationViewModel = currentLocationViewModel,
+                    currentLocationUtils = currentLocationUtils,
+                    context = context
+
+                )
             }
 
 
@@ -107,7 +141,8 @@ fun MainScreen(
                 elevation = CardDefaults.cardElevation(dimensionResource(R.dimen.small)),
                 shape = RoundedCornerShape(dimensionResource(R.dimen.xsmall)),
                 colors = CardDefaults.elevatedCardColors(Color.LightGray),
-                onClick = onWeatherButtonClicked
+                onClick = onWeatherButtonClicked,
+                border = BorderStroke(width = 1.dp, color = Color.Black)
             ) {
                 WeatherSection(weatherViewModel = weatherViewModel)
             }
@@ -120,11 +155,30 @@ fun MainScreen(
             fontWeight = FontWeight.Bold,
             fontStyle = FontStyle.Italic
         )
+        val weatherResult by weatherViewModel.weatherResult.observeAsState()
+
+        val cardColor = when (weatherResult) {
+            is NetworkResponse.Error -> CardDefaults.elevatedCardColors(Color.LightGray)
+            is NetworkResponse.Loading -> CardDefaults.elevatedCardColors(Color.LightGray)
+            is NetworkResponse.Success -> {
+                val currentHour = LocalTime.now().hour
+                val backgroundColor = when (currentHour) {
+                    in 5..11 -> Color(0xFFFFF59D)
+                    in 12..16 -> Color(0xFF90CAF9)
+                    in 17..19 -> Color(0xFFFFAB91)
+                    else -> Color(0xFFB39DDB)
+                }
+                CardDefaults.elevatedCardColors(backgroundColor)
+            }
+            null -> CardDefaults.elevatedCardColors(Color.LightGray)
+        }
+
         Card(
             modifier = Modifier.fillMaxWidth(),
             elevation = CardDefaults.cardElevation(dimensionResource(R.dimen.xsmall)),
             shape = RoundedCornerShape(dimensionResource(R.dimen.small)),
-            colors = CardDefaults.elevatedCardColors(Color.LightGray)
+            colors = cardColor,
+            border = BorderStroke(width = 1.dp, color = Color.Black)
         ) {
             Column {
                 CustomSearchBar(
@@ -191,7 +245,7 @@ fun CustomSearchBar(
         trailingIcon = {
             IconButton(
                 onClick = {
-                    weatherViewModel.getWeatherData(place);
+                    weatherViewModel.getWeatherData(place)
                     placeSearchViewModel.getPlaceData(place)
                     keyboardController?.hide()
                 }
@@ -320,7 +374,7 @@ fun WeatherSection(weatherViewModel: WeatherViewModel) {
                 WeatherSectionDetails(data = result.data)
             }
             null -> {
-                EmptyStateView()
+                EmptyStateView(modifier = Modifier)
             }
         }
     }
@@ -342,21 +396,20 @@ fun LoadingView() {
 }
 
 @Composable
-fun EmptyStateView() {
+fun EmptyStateView(
+    modifier: Modifier
+) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(dimensionResource(R.dimen.medium)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "🔍", // Using emoji instead of icon
-            fontSize = 32.sp
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Search for a location to see weather",
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center
+        Image(
+            painterResource(R.drawable.search_png),
+            contentDescription = "Search Png",
+            contentScale = ContentScale.Inside
         )
     }
 }
@@ -394,43 +447,90 @@ fun WeatherSectionDetails(
     }
 }
 @Composable
-fun ProfileSection() {
-    Row (
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding()
-    ) {
-        Box(modifier = Modifier) {
-            Image(
-                painter = painterResource(R.drawable.ic_launcher_foreground),
-                contentDescription = "Profile Picture",
-                modifier = Modifier
-                    .border(
-                        width = 0.50688.dp,
-                        color = Color(0xFF24C690),
-                        shape = RoundedCornerShape(dimensionResource(R.dimen.small))
-                    )
-                    .size(dimensionResource(R.dimen.xlarge)),
-                contentScale = ContentScale.Crop
-            )
+fun ProfileSection(
+    onAddDropDownClicked: () -> Unit,
+    currentLocationUtils: MyLocationUtils,
+    currentLocationViewModel: CurrentLocationViewModel,
+    context: Context,
+) {
+    val location = currentLocationViewModel.location.value
+    var addressText by remember { mutableStateOf("Address not available") }
+
+    LaunchedEffect(location) {
+        location?.let {
+            try {
+                addressText = currentLocationUtils.requestGeocodeLocation(it)
+            } catch (e: Exception) {
+                addressText = "Could not retrieve address"
+            }
         }
-        Spacer(Modifier.padding(dimensionResource(R.dimen.xxsmall)))
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.Start
+    }
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding()
+        ) {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.profile),
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier
+                        .border(
+                            width = 0.50688.dp,
+                            color = Color.Black,
+                            shape = RoundedCornerShape(dimensionResource(R.dimen.small))
+                        )
+                        .size(dimensionResource(R.dimen.xlarge)),
+                    contentScale = ContentScale.Crop
+                )
+            }
+            Spacer(Modifier.padding(dimensionResource(R.dimen.xxsmall)))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = "Hi!",
+                    Modifier
+                        .fillMaxWidth(),
+                    fontSize = 32.sp,
+                )
+                Text(
+                    text = "Traveller",
+                    Modifier
+                        .fillMaxWidth(),
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+        }
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Hi!",
-                Modifier
+                text = addressText,
+                modifier = Modifier
+                    .weight(1f)
                     .fillMaxWidth(),
-                fontSize = 32.sp,
+                fontSize = 12.sp,
+                maxLines = 2
             )
-            Text(
-                text = "Traveller",
-                Modifier
-                    .fillMaxWidth(),
-                fontWeight = FontWeight.Bold,
-            )
+            IconButton(
+                onClick = onAddDropDownClicked
+            ) {
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .size(dimensionResource(R.dimen.medium)),
+                )
+            }
+
         }
     }
 }
@@ -443,8 +543,12 @@ private fun MainScreenPreview() {
         MainScreen(
             onWeatherButtonClicked = { navController.navigate(Routes.WEATHER_SCREEN) },
             onCheckedButtonClicked = { navController.navigate(Routes.STATE_SCREEN) },
+            onAddDropDownClicked = { navController.navigate(Routes.CURRENT_LOCATION_SCREEN) },
             weatherViewModel = WeatherViewModel(),
-            placeSearchViewModel = PlaceSearchViewModel()
+            placeSearchViewModel = PlaceSearchViewModel(),
+            currentLocationViewModel = CurrentLocationViewModel(),
+            context = LocalContext.current,
+            currentLocationUtils = MyLocationUtils(context = LocalContext.current),
         )
     }
 }

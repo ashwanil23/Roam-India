@@ -1,4 +1,5 @@
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,10 +15,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TabRowDefaults.Divider
 import androidx.compose.material.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -31,6 +35,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,6 +44,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.roamindia.travel.app.R
 import com.roamindia.travel.app.screens.CustomSearchBar
 import com.roamindia.travel.app.screens.EmptyStateView
@@ -51,8 +58,39 @@ import com.roamindia.travel.app.weatherApi.model.WeatherModel
 import kotlin.math.cos
 import kotlin.math.sin
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherScreen(
+    modifier: Modifier = Modifier,
+    weatherViewModel: WeatherViewModel,
+    placeSearchViewModel: PlaceSearchViewModel
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    androidx.compose.material3.Text(
+                        "Check Weather",
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                    titleContentColor = androidx.compose.material3.MaterialTheme.colorScheme.onPrimary
+                )
+            )
+        }
+    ) { innerPadding ->
+        WeatherScreenContent(
+            modifier = Modifier.padding(innerPadding),
+            weatherViewModel = weatherViewModel,
+            placeSearchViewModel = placeSearchViewModel
+        )
+    }
+}
+
+@Composable
+fun WeatherScreenContent(
     modifier: Modifier = Modifier,
     weatherViewModel: WeatherViewModel,
     placeSearchViewModel: PlaceSearchViewModel
@@ -62,11 +100,11 @@ fun WeatherScreen(
     }
     val weatherResult = weatherViewModel.weatherResult.observeAsState()
     LazyColumn(
-        modifier = Modifier
+        modifier = modifier
+            .background(MaterialTheme.colors.onPrimary)
             .fillMaxSize()
             .padding(
                 horizontal = dimensionResource(R.dimen.small),
-                vertical = dimensionResource(R.dimen.mediumPlus),
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -75,7 +113,9 @@ fun WeatherScreen(
                 weatherViewModel = weatherViewModel,
                 placeSearchViewModel = placeSearchViewModel
             )
+//
         }
+
         item {
             when(val result = weatherResult.value) {
                 is NetworkResponse.Error -> {
@@ -88,32 +128,34 @@ fun WeatherScreen(
                     WeatherDetails(data = result.data)
                 }
                 null -> {
-                    EmptyStateView()
+                    Text(
+                        text = "Search for place",
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    EmptyStateView(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
                 }
             }
         }
     }
 }
-
 @Composable
 fun ErrorView(message: String) {
-    Column {
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(
-                painter = painterResource(R.drawable.error_icon),
+            Image(
+                painter = painterResource(R.drawable.error_404),
                 contentDescription = "Error",
                 modifier = Modifier
                     .padding(top = dimensionResource(R.dimen.medium))
 
-            )
-            Spacer(modifier = Modifier.padding(dimensionResource(R.dimen.small)))
-            Text(
-                text = message, // Using emoji instead of icon
-                fontSize = 16.sp
             )
         }
     }
@@ -124,7 +166,6 @@ fun WeatherDetails(
     modifier: Modifier = Modifier,
     data: WeatherModel
 ) {
-    // Dynamic background based on weather condition
     Box(
         modifier = modifier
             .padding(
@@ -252,9 +293,14 @@ fun MainTemperatureCard(data: WeatherModel) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AsyncImage(
-                    model = "https:${data.current.condition.icon}".replace("64x64", "128x128"),
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data("https:${data.current.condition.icon}".replace("64x64", "128x128"))
+                        .crossfade(true)
+                        .build(),
                     contentDescription = data.current.condition.text,
-                    modifier = Modifier.size(110.dp)
+                    modifier = Modifier.size(110.dp),
+                    placeholder = painterResource(R.drawable.star),
+                    error = painterResource(R.drawable.error_404)
                 )
 
                 Text(

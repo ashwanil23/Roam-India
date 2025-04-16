@@ -3,6 +3,7 @@ package com.roamindia.travel.app.weatherApi.model
 data class Current(
     val cloud: String,
     val condition: Condition,
+    val airQuality: AirQuality,
     val dewpoint_c: String,
     val dewpoint_f: String,
     val feelslike_c: String,

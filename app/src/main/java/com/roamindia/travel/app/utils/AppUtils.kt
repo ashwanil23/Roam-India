@@ -14,7 +14,7 @@ object Routes {
     const val STATE_SCREEN = "state"
     const val PLACE_SCREEN = "place"
     const val WEATHER_SCREEN = "WeatherPage"
-
+    const val CURRENT_LOCATION_SCREEN = "MyCurrentLocation"
 }
 
 

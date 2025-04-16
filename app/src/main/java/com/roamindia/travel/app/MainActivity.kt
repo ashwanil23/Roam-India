@@ -39,14 +39,18 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.roamindia.travel.app.onboarding.OnboardingScreen
 import com.roamindia.travel.app.screens.MainScreen
+import com.roamindia.travel.app.screens.MyCurrentLocation
 import com.roamindia.travel.app.screens.PlaceScreen
 import com.roamindia.travel.app.ui.theme.RoamIndiaTheme
+import com.roamindia.travel.app.utils.MyLocationUtils
 import com.roamindia.travel.app.utils.PreferencesManager
 import com.roamindia.travel.app.utils.Routes
+import com.roamindia.travel.app.viewModel.CurrentLocationViewModel
 import com.roamindia.travel.app.viewModel.OnboardingViewModel
 import com.roamindia.travel.app.viewModel.PlaceSearchViewModel
 import com.roamindia.travel.app.viewModel.WeatherViewModel
 import kotlinx.coroutines.delay
+import okhttp3.Route
 
 @Composable
 fun SplashScreen(navController: NavController, context: Context) {
@@ -95,6 +99,7 @@ class MainActivity : ComponentActivity() {
         }
         val weatherViewModel = ViewModelProvider(this)[WeatherViewModel::class.java]
         val placeSearchViewModel = ViewModelProvider(this)[PlaceSearchViewModel::class.java]
+        val currentLocationViewModel = ViewModelProvider(this)[CurrentLocationViewModel::class.java]
         enableEdgeToEdge()
         setContent {
             RoamIndiaTheme {
@@ -106,8 +111,10 @@ class MainActivity : ComponentActivity() {
                         preferencesManager = preferencesManager,
                         weatherViewModel = weatherViewModel,
                         placeSearchViewModel = placeSearchViewModel,
-                        windowSize = windowSize.widthSizeClass
-
+                        windowSize = windowSize.widthSizeClass,
+                        currentLocationViewModel = currentLocationViewModel,
+                        currentLocationUtils = MyLocationUtils(LocalContext.current),
+                        context = LocalContext.current
                     )
                 }
             }
@@ -124,6 +131,9 @@ fun RoamIndiaApp(
     weatherViewModel: WeatherViewModel,
     placeSearchViewModel: PlaceSearchViewModel,
     windowSize: WindowWidthSizeClass,
+    currentLocationViewModel: CurrentLocationViewModel,
+    currentLocationUtils: MyLocationUtils,
+    context: Context
 ) {
     val navController = rememberNavController()
     NavHost(navController = navController,startDestination = startDestination) {
@@ -138,8 +148,12 @@ fun RoamIndiaApp(
                 modifier = modifier,
                 onCheckedButtonClicked = { navController.navigate(Routes.STATE_SCREEN) },
                 onWeatherButtonClicked = { navController.navigate(Routes.WEATHER_SCREEN) },
+                onAddDropDownClicked = { navController.navigate(Routes.CURRENT_LOCATION_SCREEN)},
                 placeSearchViewModel = placeSearchViewModel,
-                weatherViewModel = weatherViewModel
+                weatherViewModel = weatherViewModel,
+                currentLocationViewModel = currentLocationViewModel,
+                currentLocationUtils = currentLocationUtils,
+                context = context
             )
         }
         composable(route = Routes.STATE_SCREEN){
@@ -157,6 +171,12 @@ fun RoamIndiaApp(
                 weatherViewModel = weatherViewModel,
                 placeSearchViewModel = placeSearchViewModel
                 )
+        }
+        composable(route = Routes.CURRENT_LOCATION_SCREEN) {
+            MyCurrentLocation(
+                viewModel = currentLocationViewModel,
+                weatherViewModel = weatherViewModel
+            )
         }
     }
 }

@@ -9,7 +9,8 @@ interface WeatherApi {
     @GET("/v1/current.json")
     suspend fun getWeather(
         @Query("key") apiKey: String,
-        @Query("q") city: String
+        @Query("q") city: String,
+        @Query("aqi") aqi: Boolean
     ): retrofit2.Response<WeatherModel>
 
 }

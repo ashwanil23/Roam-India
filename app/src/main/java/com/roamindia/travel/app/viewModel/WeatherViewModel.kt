@@ -14,12 +14,12 @@ import kotlinx.coroutines.launch
 class WeatherViewModel : ViewModel() {
     private val weatherApi = RetrofitInstance.weatherApi
     private val _weatherResult = MutableLiveData<NetworkResponse<WeatherModel>>()
-    var weatherResult: LiveData<NetworkResponse<WeatherModel>> = _weatherResult
+    public val weatherResult: LiveData<NetworkResponse<WeatherModel>> = _weatherResult
     fun getWeatherData(place: String) {
         _weatherResult.value = NetworkResponse.Loading
         viewModelScope.launch {
             try {
-                val response = weatherApi.getWeather(Constant.apiKey,place)
+                val response = weatherApi.getWeather(Constant.apiKey,place,true)
                 if(response.isSuccessful) {
                     Log.i("Response",response.body().toString())
                     response.body()?.let {
