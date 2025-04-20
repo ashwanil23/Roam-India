@@ -33,11 +33,20 @@
 
 ### 🎯 Smart Recommendation System
 - Personalized destination suggestions based on user preferences
-- Top 25 curated places across India with key information
-- Complete database of attractions with detailed attributes
-- Rich place profiles including establishment dates, visiting hours, entry fees, and more
-- Filter by zone, state, city, type, or other criteria
-- Beautiful card-based UI with immersive imagery
+- **Top 25 Places**: Curated list of must-visit attractions with rating, location, and images
+- **Complete Destination Catalog**: Browse all attractions with comprehensive filtering options
+- **Detailed Place Profiles**: Rich information cards containing:
+  - Visit duration and best time recommendations
+  - Entry fees and weekly closure information
+  - Historical significance and establishment dates
+  - Camera policies and nearby airport information
+  - Visitor ratings and review counts
+
+#### 🚀 Future Enhancements
+- **Collaborative Filtering**: Personalized recommendations based on individual user ratings and behavior patterns
+- **Content-Based Filtering**: Tailored suggestions matching user preferences for specific location types, regions, activities, or themes
+- **Hybrid Recommendation Engine**: Combining multiple recommendation approaches for optimal discovery experiences
+- **User Preference Learning**: System that adapts to user interactions and refines recommendations over time
 
 ### 🚀 Onboarding Experience
 - Elegant, Lottie-powered onboarding screen
@@ -133,6 +142,9 @@ Currently prototyped as a Flask web application, the recommendation system will 
 - Offline-first data availability for key destinations
 - Personalized recommendations based on user preferences and behavior
 
+### Demo
+Check out the recommendation system prototype: [https://ashwanil23.pythonanywhere.com/](https://ashwanil23.pythonanywhere.com/)
+
 ---
 
 ## 🔧 Installation Guide
@@ -225,6 +237,7 @@ NIL
 - **Weather API**: [WeatherAPI.com](https://www.weatherapi.com/)  
 - **Icons**: [Material Icons](https://fonts.google.com/icons), [Flaticon](https://www.flaticon.com)  
 - **Images**: [Unsplash](https://unsplash.com/), [Pexels](https://pexels.com)  
+- **Data Set**: [Kaggle](https://www.kaggle.com/datasets/prabhatpatel123/famous-indian-tourist-place-with-image-link), [Author](https://www.kaggle.com/saketk511)
 - **Jetpack Compose Team** for making UI fun again!
 
 ---
